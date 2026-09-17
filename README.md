@@ -2,20 +2,20 @@
 
 It provides:
 - A local vectorized knowledge base for the agent (currently supports `.md` files only).
-- Cascade RAG architecture (prevents quantized LLMs from entering infinite loops).
+- Cascade RAG architecture (prevents quantized LLMs from entering infinite loops and gives a full control).
 - MongoDB integration for chat history persistence.
 - A blazingly fast, memory-safe Rust core.
 
-## Requirements
+### Requirements
 
-### Prerequisites
+#### Prerequisites
 Ensure the following are installed on your system:
 - **Rust** (see `./crates/lm-orchestrator/Cargo.toml` for exact versions)
 - **Python** (see `./crates/lm-service/pyproject.toml` for exact dependencies)
 - **Docker & Docker Compose**
 - **Protocol Buffers Compiler** (`protoc`)
 
-### Environment Configuration
+#### Environment Configuration
 1. Initialize your environment file:
    ```bash
    cp .env.example .env
@@ -34,7 +34,7 @@ Ensure the following are installed on your system:
    ```
 6. **Hardware Acceleration**: CPU is used by default. For CUDA acceleration, follow the [LLAMA_CPP_CUDA.md](./docs/LLAMA_CPP_CUDA.md) guide.
 
-## Launching the Project
+### Launching the Project
 
 1. Start the backend services:
    ```bash
