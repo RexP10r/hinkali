@@ -14,6 +14,7 @@ class LlamaCppProvider(LMProvider):
         self._settings = settings
 
         self._model_name = settings.model_name
+        self._model_path = settings.model_path
         self._n_gpu_layers = settings.n_gpu_layers
         self._n_ctx = settings.n_ctx
         self._n_batch = settings.n_batch
@@ -31,18 +32,16 @@ class LlamaCppProvider(LMProvider):
         self.load_model()
 
     def load_model(self):
-        print(f"Loading GGUF model {self._model_name}...")
+        print(f"Loading GGUF model {self._model_path}...")
 
         kwargs = {
-            "model_path": self._model_name,
+            "model_path": self._model_path,
             "n_gpu_layers": self._n_gpu_layers,
             "n_ctx": self._n_ctx,
             "n_batch": self._n_batch,
             "n_ubatch": self._n_ubatch,
-
             "n_threads": min(os.cpu_count() or 4, self._n_threads or 4),
             "n_threads_batch": self._n_threads_batch,
-
             "offload_kqv": self._offload_kqv,
             "flash_attn": self._flash_attn,
             "low_vram": self._low_vram,
@@ -53,8 +52,11 @@ class LlamaCppProvider(LMProvider):
         if self._chat_format is not None:
             kwargs["chat_format"] = self._chat_format
 
-        print(f"Loading with params: n_gpu_layers={self._n_gpu_layers}, n_ctx={
-              self._n_ctx}, n_batch={self._n_batch}")
+        print(
+            f"Loading with params: n_gpu_layers={self._n_gpu_layers}, n_ctx={
+                self._n_ctx
+            }, n_batch={self._n_batch}"
+        )
 
         self._model = Llama(**kwargs, verbose=False)
 
@@ -66,19 +68,22 @@ class LlamaCppProvider(LMProvider):
 
         health_info = self.health_check()
         if health_info.is_ready:
-            print(f"Model loaded successfully. Context length: {
-                  health_info.context_length}")
+            print(
+                f"Model loaded successfully. Context length: {
+                    health_info.context_length
+                }"
+            )
 
-    def generate(self,
-                 messages: list[ChatMessage],
-                 temperature: float = 0.7,
-                 max_tokens: int = 256,
-                 top_p: float = 0.9,
-                 top_k: int = 32,
-                 ) -> GenerateResult:
+    def generate(
+        self,
+        messages: list[ChatMessage],
+        temperature: float = 0.7,
+        max_tokens: int = 256,
+        top_p: float = 0.9,
+        top_k: int = 32,
+    ) -> GenerateResult:
 
-        llm_messages = [{"role": m.role, "content": m.content}
-                        for m in messages]
+        llm_messages = [{"role": m.role, "content": m.content} for m in messages]
 
         start_time = time.perf_counter()
         response = self._model.create_chat_completion(
@@ -87,7 +92,7 @@ class LlamaCppProvider(LMProvider):
             temperature=temperature,
             top_k=top_k,
             top_p=top_p,
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
         )
         elapsed_ms = (time.perf_counter() - start_time) * 1000
 

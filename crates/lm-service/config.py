@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     max_workers: int = Field(alias="LM_SERVICE_MAX_WORKERS")
 
     model_name: str = Field(alias="MODEL_NAME")
+    model_path: str = Field(alias="MODEL_PATH")
     device: str = Field(alias="DEVICE")
     torch_dtype: str = Field(alias="TORCH_DTYPE")
 
