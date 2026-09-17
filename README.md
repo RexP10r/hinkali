@@ -21,9 +21,9 @@ Ensure the following are installed on your system:
   ```
 - Download a GGUF model (e.g., [Qwen3.5-9B-GGUF](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/tree/main)) from Hugging Face.
   Create a `./models` directory and place the downloaded model there.
-  Update your `.env` file with the model path:
+  Update your `.env` file with the model path (relative to `lm-service` dir path):
   ```env
-  MODEL_PATH=./models/llm.gguf
+  MODEL_PATH=../../models/llm.gguf
   MODEL_NAME=llm
   ```
   Download an embedding model (e.g., [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/tree/main)) and configure its paths in `.env`:
