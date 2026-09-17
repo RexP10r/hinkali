@@ -44,5 +44,3 @@ Ensure the following are installed on your system:
    ```bash
    cargo run -p tui
    ```
-```
-

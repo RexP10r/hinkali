@@ -1,0 +1,8 @@
+- [ ] Clean up code (e.g., make fields private in non-data structs)
+- [ ] Add Vim keybindings to the TUI
+- [ ] Load quantized models directly without RAM preprocessing without llama cpp
+- [ ] Decompose the monolith into microservices via a lightweight message broker
+- [ ] Rebuild the Redis key structure from flat to complex
+- [ ] Implement hybrid search
+- [ ] Implement RLM
+- [ ] Handle parsing errors via a separate sub-agent
