@@ -8,7 +8,7 @@ use crate::app::{App, ConnectionStatus};
 
 pub fn render(frame: &mut Frame, area: Rect, app: &App) {
     let title = Span::styled(
-        " Nexus Mind ",
+        " Nexus ",
         Style::default().fg(Color::White).add_modifier(Modifier::BOLD),
     );
 
