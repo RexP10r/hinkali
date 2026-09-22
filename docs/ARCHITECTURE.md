@@ -11,6 +11,10 @@ In the future, it will be decomposed into microservices.
 RAG is not a task that requires an iterative agentic loop. There is an algorithm for how humans process information, and the agent should follow the same approach.
 Furthermore, this project focuses on local pipelines. Local quantized models have a known tendency to fall into infinite loops. The cascade pipeline addresses both of these issues.
 
+The pipeline executes exactly two LLM calls:
+1. Pre-retrieval: analyzes intent, identifies information gaps, may call one tool
+2. Post-retrieval: evaluates retrieved context, generates final answer
+
 ## Memory
 Message history is stored as BSON documents in MongoDB. Messages have a complex structure (tool calls, subagents in the future), so relational SQL-like databases are not suitable here.
 Redis is used as a cache layer. Its necessity for a fully local pipeline is still under consideration.
@@ -26,7 +30,9 @@ SUMMARY_INTERVAL=2
 ```
 
 ## Documents
-Each document is parsed into a tree data structure based on heading hierarchy. When chunks are extracted, the full heading path is prepended to each chunk as markdown headers. This ensures that every chunk retains its document context, so semantically related chunks remain discoverable even when separated by unrelated sections. For example:
+Each document is parsed into a tree data structure based on heading hierarchy. When chunks are extracted, the full heading path is prepended to each chunk as markdown headers. This ensures that every chunk retains its document context, so semantically related chunks remain discoverable even when separated by unrelated sections.
+
+Currently only Markdown is supported (parsed via comrak). Chunks are bounded by token limits and split on sentences or list items when they exceed them. For example:
 ```md
 # Hom functors.md
 
@@ -65,4 +71,5 @@ $$
 
 ## Vector Search
 The current cascade pipeline uses a JSON response field to invoke tools. At present, the model calls exactly one tool per query -- either sparse search or dense search (a hybrid approach is planned for the future).
-TF-IDF vectors serve as the sparse representation. MiniLM embeddings provide the dense vectors and must be downloaded separately.
+
+TF-IDF vectors serve as the sparse representation, using English stemming and vocabulary pruning. MiniLM embeddings provide the dense vectors via ONNX Runtime with mean pooling and L2 normalization.
