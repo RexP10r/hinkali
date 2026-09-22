@@ -1,30 +1,32 @@
-## General 
-Python `lm-service` runs llama-cpp-python library just to get answer from llm.
-It connected to Rust lm-orchestrator via gRPC. Rust core is the main structure, that manages:
+## Overview
+The Python `lm-service` runs the llama-cpp-python library to serve LLM inference.
+It connects to the Rust `lm-orchestrator` via gRPC. The Rust core is the central component responsible for managing:
 - agent pipelines (currently RAG only)
-- databases (redis, mongodb, qdrant)
+- databases (Redis, MongoDB, Qdrant)
 - tools
-Later it will decomposed into microservices.
+
+In the future, it will be decomposed into microservices.
 
 ## Cascade RAG
-RAG is not a task that requires cycle. There is an exact algorithm how humen process information. Agent should do the same.
-Furthermore, this project is focused on local pipelines, local quatizied models have a known pattern of falling to infinite loop. Cascade pipeline solves those problems at once.
+RAG is not a task that requires an iterative agentic loop. There is an algorithm for how humans process information, and the agent should follow the same approach.
+Furthermore, this project focuses on local pipelines. Local quantized models have a known tendency to fall into infinite loops. The cascade pipeline addresses both of these issues.
 
 ## Memory
-Messages history is stored as bson documents in mongodb. Messages have complex structure (tool calls, subagents later) so relational sql-like dabases are useless here.
-Redis obviously is just a cache db. There is a question if it is neccessary to local pipeline.
-Mongodb docs have a field to store agent's memory called summary. Summary updates due to sliding window algorithm:
-- let n be history context agent gets followed by user query
-- let m be window size
-So, initially we have an empty summary, it updates due to the condition below: `chat_length % m == n`. 
-Those parameters can be set as environment variables:
+Message history is stored as BSON documents in MongoDB. Messages have a complex structure (tool calls, subagents in the future), so relational SQL-like databases are not suitable here.
+Redis is used as a cache layer. Its necessity for a fully local pipeline is still under consideration.
+MongoDB documents include a field for the agent's memory called `summary`. The summary is updated using a sliding window algorithm:
+- let `n` be: the number of recent messages to keep in context
+- let `m` be: the batch size of new messages to summarize
+
+Initially, the summary is empty. It is updated when the following condition is met: `total_messages > n && (total_messages - n) % m == 0`.
+These parameters can be configured via environment variables:
 ```env
 HISTORY_MAX_MESSAGES=4
 SUMMARY_INTERVAL=2
 ```
 
 ## Documents
-Each document is parsed to the tree data structure where each leaf contains the full path to it. So vectorizer can get chunks, those can be related to the topic of a document not straightly. For example:
+Each document is parsed into a tree data structure based on heading hierarchy. When chunks are extracted, the full heading path is prepended to each chunk as markdown headers. This ensures that every chunk retains its document context, so semantically related chunks remain discoverable even when separated by unrelated sections. For example:
 ```md
 # Hom functors.md
 
@@ -61,7 +63,6 @@ $$
 $$
 ```
 
-## Vector search
-Current cascade pipeline has a json field to call a tool. Currently, model can call sparse search or dense search at once (hybrid approach planned later).
-So tfidf vector serve as sparse ones. Minilm embeddings are dense vectors (so thats why you need to download it).
-
+## Vector Search
+The current cascade pipeline uses a JSON response field to invoke tools. At present, the model calls exactly one tool per query -- either sparse search or dense search (a hybrid approach is planned for the future).
+TF-IDF vectors serve as the sparse representation. MiniLM embeddings provide the dense vectors and must be downloaded separately.
