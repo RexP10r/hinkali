@@ -4,6 +4,7 @@ It provides:
 - A local vectorized knowledge base for the agent (currently supports `.md` files only).
 - Cascade RAG architecture with Schema-Guided-Reasoning (prevents quantized LLMs from entering infinite loops and gives a full control over the pipeline).
 - A blazingly fast, memory-safe Rust core.
+See [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed system design.
 
 ### Requirements
 
