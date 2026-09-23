@@ -1,4 +1,4 @@
-`nexus` implements modern NLP approaches using modular pipelines. 
+`hinkali` implements modern NLP approaches using modular pipelines. 
 
 It provides:
 - A local vectorized knowledge base for the agent (currently supports `.md` files only).
@@ -38,9 +38,9 @@ Ensure the following are installed on your system:
 
 1. Start the backend services:
    ```bash
-   ./nexus.sh --launch
+   ./hinkali.sh --launch
    ```
-   *(Inspect `nexus.sh` to understand local error handling. Runtime logs are saved in the `./logs` directory.)*
+   *(Inspect `hinkali.sh` to understand local error handling. Runtime logs are saved in the `./logs` directory.)*
 2. Launch the TUI client in a separate terminal:
    ```bash
    cargo run -p tui

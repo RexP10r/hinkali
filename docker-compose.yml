@@ -22,7 +22,7 @@ services:
   qdrant:
     image: qdrant/qdrant:latest
     volumes:
-      - ~/.config/nexus/qdrant_storage:/qdrant/storage
+      - ~/.config/hinkali/qdrant_storage:/qdrant/storage
     healthcheck:
       test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/6333'"]
       interval: 10s
