@@ -12,8 +12,10 @@ See [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed system design.
 Ensure the following are installed on your system:
 - **Rust** (see `./crates/lm-orchestrator/Cargo.toml` for exact versions)
 - **Python** (see `./crates/lm-service/pyproject.toml` for exact dependencies)
+- **uv** (runs the Python service and the protobuf generation)
 - **Docker & Docker Compose**
 - **Protocol Buffers Compiler** (`protoc`)
+- **jq** (the launcher parses container health status)
 
 #### Environment Configuration
 - Initialize your environment file:
@@ -45,3 +47,6 @@ Ensure the following are installed on your system:
    ```bash
    cargo run -p tui
    ```
+
+For a first end-to-end example (add a small glossary, ask one question), see
+[docs/QUICKSTART.md](./docs/QUICKSTART.md).
