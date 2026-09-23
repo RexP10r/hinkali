@@ -116,6 +116,11 @@ except Exception:
 
 # ── LM service ───────────────────────────────────────────────
 
+generate_pb() {
+	log_info "Generating protobuf modules for lm service"
+	"$SCRIPT_DIR/crates/lm-service/generate_pb.sh" || die "Failed to generate protobuf modules"
+}
+
 launch_lm_service() {
 	if load_pid "$LM_SERVICE_PID_FILE" >/dev/null 2>&1; then
 		log_info "LM service is already running (PID $(load_pid "$LM_SERVICE_PID_FILE"))"
@@ -123,6 +128,7 @@ launch_lm_service() {
 	fi
 
 	mkdir -p logs
+	generate_pb
 	log_info "Launching lm service"
 
 	uv run --directory crates/lm-service main.py > ./logs/lm_service.log 2>&1 &
