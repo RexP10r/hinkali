@@ -122,11 +122,13 @@ impl TfIdfProvider {
         }
 
         local_vocab.total_docs = local_vocab.total_docs.saturating_add(processed_docs);
-        self.prune_vocab();
+        Self::prune_vocab(&mut local_vocab, self.max_vocab_size);
     }
-    fn prune_vocab(&self) {
-        let mut vocab = self.vocab.write().unwrap();
-        let target_size = self.max_vocab_size as usize;
+
+    /// Applies the vocabulary cap under the caller's write guard; the lock is
+    /// not reentrant, so pruning must not acquire it again.
+    fn prune_vocab(vocab: &mut VocabState, max_vocab_size: u32) {
+        let target_size = max_vocab_size as usize;
         if vocab.term_to_index.len() <= target_size {
             return;
         }
@@ -292,5 +294,16 @@ mod tests {
                 assert!(vocab.term_doc_count[idx] >= 2);
             }
         }
+    }
+
+    #[test]
+    fn test_update_vocab_completes_and_prunes() {
+        let provider = TfIdfProvider::new(VocabState::default(), 2);
+
+        provider.update_vocab(&vec!["alpha beta gamma".to_string()]);
+
+        let vocab = provider.vocab.read().unwrap();
+        assert!(vocab.term_to_index.len() <= 2);
+        assert!(!vocab.pruned_counts.is_empty());
     }
 }
