@@ -40,6 +40,9 @@ Ensure the following are installed on your system:
    ```bash
    ./hinkali.sh --launch
    ```
+   The launcher generates the Python protobuf modules from
+   `proto/lm_service.proto` before starting `lm-service`; rerun the generation
+   manually with `crates/lm-service/generate_pb.sh`.
    *(Inspect `hinkali.sh` to understand local error handling. Runtime logs are saved in the `./logs` directory.)*
 2. Launch the TUI client in a separate terminal:
    ```bash
